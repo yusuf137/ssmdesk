@@ -1,0 +1,76 @@
+rules_version = '2';
+
+// Client SDK access is deny-by-default.
+// Order writes, prices, and roles are changed only by the Admin SDK.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create, update, delete: if false;
+    }
+
+    match /orders/{orderId} {
+      allow read, write: if false;
+    }
+
+    match /orderPrivate/{orderId} {
+      allow read, write: if false;
+    }
+
+    match /services/{serviceId} {
+      allow read, write: if false;
+    }
+
+    match /auditLogs/{logId} {
+      allow read, write: if false;
+    }
+
+    match /payments/{paymentId} {
+      allow read, write: if false;
+    }
+
+    match /wallets/{userId} {
+      allow read, write: if false;
+    }
+
+    match /walletTransactions/{transactionId} {
+      allow read, write: if false;
+    }
+
+    match /pricingConfig/{configId} {
+      allow read, write: if false;
+    }
+
+    match /pricingOverrides/{serviceId} {
+      allow read, write: if false;
+    }
+
+    match /refillRequests/{refillRequestId} {
+      allow read, write: if false;
+    }
+
+    match /refillSlots/{orderId} {
+      allow read, write: if false;
+    }
+
+    match /cancelRequests/{cancelRequestId} {
+      allow read, write: if false;
+    }
+
+    match /cancelSlots/{orderId} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
